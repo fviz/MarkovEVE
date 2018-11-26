@@ -1,6 +1,10 @@
 import websocket
 import json
 import pyttsx3 as pyttsx
+import time
+from markov import MarkovGenerator
+
+MGenerator = MarkovGenerator()
 
 engine = pyttsx.init()
 
@@ -8,22 +12,58 @@ try:
 	import thread
 except ImportError:
 	import _thread as thread
-import time
+
+
+def get_attacker_info(message_json):
+	n_attackers = 0
+	damageSum = 0
+	for attacker in message_json.get("attackers"):
+		n_attackers += 1
+		damageSum += attacker.get("damage_done")
+	info = {
+		"numberOfAttackers": n_attackers,
+		"totalDamage": damageSum
+	}
+	return info
 
 
 def on_message(ws, message):
-	print(message)
+	# Print message and parse JSON
+	# print(message)
 	messageJSON = json.loads(message)
-	damageSum = 0
-	numberOfAttackers = 0
-	for attacker in messageJSON.get("attackers"):
-		numberOfAttackers += 1
-		damageSum += attacker.get("damage_done")
+	victimOBJ = messageJSON.get("victim")
 
-	victim = messageJSON.get("victim").get("character_id")
-	engine.say(f"Capsuleer {victim} destroyed by {numberOfAttackers} enemies. Total damage was {damageSum}")
+	# Get attacker info
+	attackerInfo = get_attacker_info(messageJSON)
+	numberOfAttackers = attackerInfo["numberOfAttackers"]
+	totalDamage = attackerInfo["totalDamage"]
+	victimNumber = victimOBJ.get("character_id")
+	victimAlliance = victimOBJ.get("alliance_id")
+	if victimAlliance == None:
+		victimAlliance = "Unknown Alliance"
+	enemyAlliance = messageJSON.get("attackers")[0].get("alliance_id")
+	if enemyAlliance == None:
+		victimAlliance = "Unknown Alliance"
+	solarSystem = messageJSON.get("solar_system_id")
+	print(victimNumber)
+
+	# Generate message
+	generated_message = MGenerator.generate_death()
+	generated_message = generated_message.replace("{Victim}", str(victimNumber))
+	generated_message = generated_message.replace("{Alliance}", str(victimAlliance))
+	generated_message = generated_message.replace("{Region}", str(solarSystem))
+	if numberOfAttackers > 1:
+		generated_message = generated_message.replace("{N_Enemies}", str(numberOfAttackers))
+	else:
+		generated_message = generated_message.replace("{N_Enemies} enemies", f"{str(numberOfAttackers)} enemy")
+	generated_message = generated_message.replace("{Enemy_Alliance}", str(enemyAlliance))
+	generated_message = generated_message.replace("{Damage}", str(totalDamage))
+	# generated_message = generated_message.replace("None", "Unknown Victim")
+	print(generated_message)
+
+	# Say message
+	engine.say(generated_message)
 	engine.runAndWait()
-	print(f"Attackers: {numberOfAttackers} – Total damage: {damageSum} – Victim: {victim}\n")
 
 
 def on_error(ws, error):
