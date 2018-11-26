@@ -1,5 +1,8 @@
 import websocket
 import json
+import pyttsx3 as pyttsx
+
+engine = pyttsx.init()
 
 try:
 	import thread
@@ -18,6 +21,8 @@ def on_message(ws, message):
 		damageSum += attacker.get("damage_done")
 
 	victim = messageJSON.get("victim").get("character_id")
+	engine.say(f"Capsuleer {victim} destroyed by {numberOfAttackers} enemies. Total damage was {damageSum}")
+	engine.runAndWait()
 	print(f"Attackers: {numberOfAttackers} – Total damage: {damageSum} – Victim: {victim}\n")
 
 

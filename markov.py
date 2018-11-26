@@ -1,7 +1,7 @@
 import markovify
 
 # Get raw text as a string
-with open("text.txt") as f:
+with open("gallica.txt") as f:
 	text = f.read()
 
 # Build the model
