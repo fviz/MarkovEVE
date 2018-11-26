@@ -11,14 +11,14 @@ import time
 def on_message(ws, message):
 	print(message)
 	messageJSON = json.loads(message)
-	damageSum  = 0
+	damageSum = 0
 	numberOfAttackers = 0
 	for attacker in messageJSON.get("attackers"):
 		numberOfAttackers += 1
 		damageSum += attacker.get("damage_done")
 
 	victim = messageJSON.get("victim").get("character_id")
-	print(f"Attackers: {numberOfAttackers} – Total damage: {damageSum} – Victim: {victim}")
+	print(f"Attackers: {numberOfAttackers} – Total damage: {damageSum} – Victim: {victim}\n")
 
 
 def on_error(ws, error):
