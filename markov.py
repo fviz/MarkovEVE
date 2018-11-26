@@ -1,19 +1,13 @@
 import markovify
 
-# Get raw text as a string
-with open("gallica.txt") as f:
-	text = f.read()
 
-# Build the model
-text_model = markovify.Text(text)
+class MarkovGenerator:
 
-# Print five randomly-generated sentences
-print("Random sentences:")
-for i in range(5):
-	print(text_model.make_sentence())
-print("\n")
+	def __init__(self):
+		with open("deaths.txt") as deathFile:
+			self.deathsSource = deathFile.read()
+			# TODO: Try state_size = 2
+			self.deathsModel = markovify.Text(self.deathsSource)
 
-# Print three random-ly generated sentences of no more than 140 characters
-print("Random sentences (max. 140 characters):")
-for i in range(3):
-	print(text_model.make_short_sentence(140))
+	def generate_death(self):
+		generatedDeath = self.deathsModel.make_short_sentence(120)

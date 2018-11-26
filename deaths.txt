@@ -1,0 +1,16 @@
+{Victim} was downed in an attack at {Region}.
+{N_Enemies} attacked {Victim} in {Region}.
+{Enemy_Alliance} attacked and killed a convoy in {Region}.
+{Victim} was captured by the {Enemy_Alliance} as a a result of dogfight.
+{Enemy_Alliance} captured {Victim} in {Region}.
+{Victim}'s ship was damaged and destroyed in battle.
+{Victim} was killed by a bomb that targeted his convoy in {Region}.
+{Victim}  from {Alliance} was blown up in a explosion in {Region}.
+{Victim} got killed by {N_Enemies} enemies.
+In a system of {Region}, {Victim} from {Victim_Corporation} was podded.
+{Victim} was surrounded and killed by N_Enemies capsuleers from {Enemy_Alliance}.
+{N_Enemies} capsuleers from {Enemy_Alliance} captured {Victim} in a corner of {System}.
+In a far moon of {System}, {N_Enemies} capsuleers killed a member of {Alliance}.
+A explosion in {Region} damaged and destroyed {Victim}'s ship.
+{Victim} and their convoy attacked in {Region}.
+{Victim} from {Alliance} was KIA.
