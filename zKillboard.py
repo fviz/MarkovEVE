@@ -1,15 +1,40 @@
-import asyncio
-import websockets
+import websocket
 
-async def hello():
-    async with websockets.connect(
-            'wss://zkillboard.com:2096') as websocket:
-        # name = input("What's your name? ")
+try:
+	import thread
+except ImportError:
+	import _thread as thread
+import time
 
-        await websocket.send('{"action":"sub","channel":"killstream"}')
-        print("Request sent")
 
-        greeting = await websocket.recv()
-        print(f"{greeting}")
+def on_message(ws, message):
+	print(message)
 
-asyncio.get_event_loop().run_until_complete(hello())
+
+def on_error(ws, error):
+	print(error)
+
+
+def on_close(ws):
+	print("Connection closed.")
+
+
+def on_open(ws):
+	def run(*args):
+		print("Sending request...")
+		ws.send('{"action": "sub", "channel": "killstream"}')
+		time.sleep(1)
+		print("Request sent. Start listening...")
+
+
+	thread.start_new_thread(run, ())
+
+
+if __name__ == "__main__":
+	# websocket.enableTrace(True)
+	ws = websocket.WebSocketApp("wss://zkillboard.com:2096",
+								on_message=on_message,
+								on_error=on_error,
+								on_close=on_close)
+	ws.on_open = on_open
+	ws.run_forever()
