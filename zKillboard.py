@@ -1,4 +1,5 @@
 import websocket
+import json
 
 try:
 	import thread
@@ -9,6 +10,15 @@ import time
 
 def on_message(ws, message):
 	print(message)
+	messageJSON = json.loads(message)
+	damageSum  = 0
+	numberOfAttackers = 0
+	for attacker in messageJSON.get("attackers"):
+		numberOfAttackers += 1
+		damageSum += attacker.get("damage_done")
+
+	victim = messageJSON.get("victim").get("character_id")
+	print(f"Attackers: {numberOfAttackers} – Total damage: {damageSum} – Victim: {victim}")
 
 
 def on_error(ws, error):
@@ -21,10 +31,10 @@ def on_close(ws):
 
 def on_open(ws):
 	def run(*args):
-		print("Sending request...")
 		ws.send('{"action": "sub", "channel": "killstream"}')
+		print("Sending request...")
 		time.sleep(1)
-		print("Request sent. Start listening...")
+		print("Request sent. Start listening...\n\n>>\n")
 
 
 	thread.start_new_thread(run, ())
