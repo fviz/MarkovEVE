@@ -3,8 +3,10 @@ import json
 import pyttsx3 as pyttsx
 import time
 from markov import MarkovGenerator
+from ESIConnection import ESI
 
 MGenerator = MarkovGenerator()
+esi = ESI()
 
 engine = pyttsx.init()
 
@@ -38,6 +40,7 @@ def on_message(ws, message):
 	numberOfAttackers = attackerInfo["numberOfAttackers"]
 	totalDamage = attackerInfo["totalDamage"]
 	victimNumber = victimOBJ.get("character_id")
+	victimName = esi.get_character_name(victimNumber)
 	victimAlliance = victimOBJ.get("alliance_id")
 	if victimAlliance == None:
 		victimAlliance = "Unknown Alliance"
@@ -49,7 +52,7 @@ def on_message(ws, message):
 
 	# Generate message
 	generated_message = MGenerator.generate_death()
-	generated_message = generated_message.replace("{Victim}", str(victimNumber))
+	generated_message = generated_message.replace("{Victim}", str(victimName))
 	generated_message = generated_message.replace("{Alliance}", str(victimAlliance))
 	generated_message = generated_message.replace("{Region}", str(solarSystem))
 	if numberOfAttackers > 1:
