@@ -10,4 +10,6 @@ class MarkovGenerator:
 			self.deathsModel = markovify.Text(self.deathsSource)
 
 	def generate_death(self):
-		generatedDeath = self.deathsModel.make_short_sentence(120)
+		generatedDeath = self.deathsModel.make_short_sentence(100)
+		# print(generatedDeath)
+		return generatedDeath
