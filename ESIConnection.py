@@ -2,12 +2,14 @@ from esipy import EsiClient
 from esipy import EsiApp
 from esipy import EsiSecurity
 from esipy import App
+from DebugMessages import debugMessages
+from tts import engine
 
 
 class ESI:
 
 	def __init__(self):
-		print("Connecting to ESI...")
+		engine.say(debugMessages["esi_connecting"])
 		self.esi_app = EsiApp()
 		self.app = self.esi_app.get_latest_swagger
 
@@ -24,11 +26,11 @@ class ESI:
 			retry_requests=True,
 			raw_body_only=False
 		)
-		print("Done.")
+		engine.say(debugMessages["done"])
 
-	def get_character_name(self, id):
+	def get_name(self, request_id):
 		get_character_name_operation = self.app.op['post_universe_names'](
-			ids=[str(id)]
+			ids=[str(request_id)]
 		)
 
 		response = self.client.request(get_character_name_operation)
