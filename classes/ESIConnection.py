@@ -2,8 +2,8 @@ from esipy import EsiClient
 from esipy import EsiApp
 from esipy import EsiSecurity
 from esipy import App
-from DebugMessages import debugMessages
-from tts import engine
+from classes.DebugMessages import debugMessages
+from classes.tts import engine
 
 
 class ESI:

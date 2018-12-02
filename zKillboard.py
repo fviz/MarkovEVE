@@ -1,12 +1,9 @@
 import websocket
 import json
-import pyttsx3 as pyttsx
-import time
-from markov import MarkovGenerator
-from ESIConnection import ESI
-from tts import engine
-from DebugMessages import debugMessages
-import sys
+from classes.markov import MarkovGenerator
+from classes.ESIConnection import ESI
+from classes.tts import engine
+from classes.DebugMessages import debugMessages
 
 
 MGenerator = MarkovGenerator()

@@ -1,4 +1,4 @@
-from extractaudioglobals import word_to_search
+from extract_audio.extractaudioglobals import word_to_search
 from classes.WEMFile import WEMFile
 import os
 import re
