@@ -1,4 +1,4 @@
-from extractaudioglobals import export_directory_path
+from extract_audio.extractaudioglobals import export_directory_path
 
 
 class WEMFile:
