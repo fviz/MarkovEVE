@@ -2,6 +2,7 @@
   <dictionary name="vzntn">
     <words>
       <w>killstream</w>
+      <w>pyttsx</w>
       <w>websocket</w>
     </words>
   </dictionary>
