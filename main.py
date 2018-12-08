@@ -98,13 +98,14 @@ def parse_message(messageInput):
 
 
 def on_message(ws, message):
-	# Play sounds
-	sp.send_message("explosions")
-
 	# Parse message
 	msgParseResult = parse_message(message)
 	parsedMessage = msgParseResult['msg']
 	numberOfAttackers = msgParseResult['n_attackers']
+	# Play soundsRR
+	sp.send_message("explosions", numberOfAttackers)
+	sp.send_message("shots", 2)
+	# Say message
 	engine.say(parsedMessage)
 
 
