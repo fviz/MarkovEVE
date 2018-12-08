@@ -4,10 +4,19 @@ from classes.markov import MarkovGenerator
 from classes.ESIConnection import ESI
 from classes.tts import engine
 from classes.DebugMessages import debugMessages
+from classes.SoundPlayer import SoundPlayer
 
 
 MGenerator = MarkovGenerator()
-esi = ESI()
+esi_connection = False
+while esi_connection is False:
+	try:
+		esi = ESI()
+		esi_connection = True
+	except:
+		print("Error. Trying again...")
+
+sp = SoundPlayer()
 
 try:
 	import thread
@@ -28,10 +37,10 @@ def get_attacker_info(message_json):
 	return info
 
 
-def on_message(ws, message):
+def parse_message(messageInput):
 	# Print message and parse JSON
 	# print(message)
-	messageJSON = json.loads(message)
+	messageJSON = json.loads(messageInput)
 	victimOBJ = messageJSON.get("victim")
 
 	# Get attacker info
@@ -43,12 +52,12 @@ def on_message(ws, message):
 		victimName = "Unknown Victim"
 	else:
 		victimName = esi.get_name(victimNumber)
-	victimAlliance = victimOBJ.get("alliance_id") 							# TODO: Victim Alliance name
+	victimAlliance = victimOBJ.get("alliance_id")  # TODO: Victim Alliance name
 	if victimAlliance is None:
 		victimAllianceName = "Unknown Alliance"
 	else:
 		victimAllianceName = esi.get_name(victimAlliance)
-	enemyAlliance = messageJSON.get("attackers")[0].get("alliance_id")		# TODO: Enemy Alliance name
+	enemyAlliance = messageJSON.get("attackers")[0].get("alliance_id")  # TODO: Enemy Alliance name
 	if enemyAlliance is None:
 		enemyAllianceName = "Unknown Alliance"
 	else:
@@ -59,7 +68,7 @@ def on_message(ws, message):
 		victimCorporationName = "Unknown Corporation"
 	else:
 		victimCorporationName = esi.get_name(victimCorporation)
-	enemyCorporation = messageJSON.get("attackers")[0].get("corporation_id")		# TODO: Enemy Alliance name
+	enemyCorporation = messageJSON.get("attackers")[0].get("corporation_id")  # TODO: Enemy Alliance name
 	if enemyCorporation is None:
 		enemyCorporationName = "Unknown Corporation"
 	else:
@@ -81,17 +90,32 @@ def on_message(ws, message):
 	generated_message = generated_message.replace("{Victim_Alliance}", str(victimAllianceName))
 	generated_message = generated_message.replace("{Enemy_Corporation}", str(enemyCorporationName))
 	generated_message = generated_message.replace("{Victim_Corporation}", str(victimCorporationName))
+	response = {
+		"msg": generated_message,
+		"n_attackers": numberOfAttackers
+	}
+	return response
 
+
+def on_message(ws, message):
+	# Parse message
+	msgParseResult = parse_message(message)
+	parsedMessage = msgParseResult['msg']
+	numberOfAttackers = msgParseResult['n_attackers']
+	# Play soundsRR
+	sp.send_message("explosions", numberOfAttackers)
+	sp.send_message("shots", 2)
 	# Say message
-	engine.say(generated_message)
+	engine.say(parsedMessage)
 
 
 def on_error(ws, error):
 	print("Error: " + str(error))
 
 
-def on_close(ws):
-	print("Connection closed.")
+def on_close(ws_input):
+	print("Connection closed. Resetting...")
+	initializer()
 
 
 def on_open(ws):
@@ -105,7 +129,7 @@ def on_open(ws):
 	thread.start_new_thread(run, ())
 
 
-if __name__ == "__main__":
+def initializer():
 	websocket.enableTrace(True)
 	ws = websocket.WebSocketApp("wss://zkillboard.com:2096",
 								on_message=on_message,
@@ -113,3 +137,7 @@ if __name__ == "__main__":
 								on_close=on_close)
 	ws.on_open = on_open
 	ws.run_forever()
+
+
+if __name__ == "__main__":
+	initializer()
