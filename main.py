@@ -90,8 +90,9 @@ def on_error(ws, error):
 	print("Error: " + str(error))
 
 
-def on_close(ws):
-	print("Connection closed.")
+def on_close(ws_input):
+	print("Connection closed. Resetting...")
+	initializer()
 
 
 def on_open(ws):
@@ -105,7 +106,7 @@ def on_open(ws):
 	thread.start_new_thread(run, ())
 
 
-if __name__ == "__main__":
+def initializer():
 	websocket.enableTrace(True)
 	ws = websocket.WebSocketApp("wss://zkillboard.com:2096",
 								on_message=on_message,
@@ -113,3 +114,7 @@ if __name__ == "__main__":
 								on_close=on_close)
 	ws.on_open = on_open
 	ws.run_forever()
+
+
+if __name__ == "__main__":
+	initializer()
